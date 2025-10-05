@@ -4,8 +4,8 @@
 import mongoose from 'mongoose'
 const ConnectDb = async()=>{
     try{
-     console.log('db connected' , process.env.DB_URL)
-     mongoose.connect(process.env.DB_URL)
+     console.log('Trying to connect to DB :' , process.env.DB_URL)
+     await mongoose.connect(process.env.DB_URL)
      console.log("DB is connectd Successfully::")
     }
     catch(err){
