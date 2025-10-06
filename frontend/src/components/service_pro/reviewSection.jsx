@@ -1,4 +1,5 @@
-
+import React, { useState, useEffect, useCallback, useReducer } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import API from '../../hooks/api'
 
 // --- ICONS (Unchanged) ---
@@ -93,12 +94,12 @@ const useServiceProvider = (id) => {
         try {
 
             let data
-            API.get(`/servicepro/${id}`)
+            await API.get(`/servicepro/${id}`)
             .then((res)=>{
               data = res.data;
             })
             .catch((err)=>{
-            throw new Error(`Failed to fetch data. Server error: ${err.message || err}`);
+            throw new Error(`Failed to fetch data. Server error: ${err.message || "---"}`);
             })
 
             const normalizedData = {
@@ -314,7 +315,7 @@ const ReviewForm = ({ providerId, onReviewSubmit }) => {
        
         try {
             
-            API.put(`/review/${providerId}`, {
+            await API.put(`/review/${providerId}`, {
                     email,
                     ratting: formState.rating,
                     review: formState.reviewText

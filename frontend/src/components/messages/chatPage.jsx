@@ -1,6 +1,7 @@
 
- import React from "react";
- import API from '../../hooks/api'
+import React from "react";
+import API from '../../hooks/api'
+
 
   const findConversation = async ({token, chatId , SetConversation}) => {   /// funtion for find conversation :::>>>
     try {
@@ -9,19 +10,19 @@
         return;
        }
       let data
-        API.get(`/messages/findParticipant/${chatId}`)
+        await API.get(`/messages/findParticipant/${chatId}`)
         .then((res)=>{
             data = res.data;
             SetConversation(data);  
             console.log("Conversation data:", data);  
         })
         .catch((err)=>{
-            console.error(`Request failed:` , err.message || err);
+            console.error(`Request failed:` , err.message || "--");
             SetConversation({});   
         })
     } 
     catch (err) {
-      console.log('Error in finding participant ', err);
+      console.log('Error in finding participant ', err.message || "--");
     }
   };
 
@@ -40,7 +41,7 @@
             : `/servicepro/${targetId}`;
             
             let data;
-            API.get(endpoint)
+            await API.get(endpoint)
             .then((res)=>{
                 data = res.data;
                 console.log('Other participant data:', data);
@@ -66,12 +67,12 @@
 
     try {
       let data;
-        API.post("/messages/findConversation", {conversationId: chatId, userId: LOGGED_IN_USER_ID})
+        await API.post("/messages/findConversation", {conversationId: chatId, userId: LOGGED_IN_USER_ID})
         .then((res)=>{
             data = res.data;
         })
         .catch((err)=>{
-             throw new Error(`Failed to fetch messages ${err}`);
+             throw new Error(`Failed to fetch messages ${err.message || "--"}`);
         })
 
       console.log("Fetched messages:", data);

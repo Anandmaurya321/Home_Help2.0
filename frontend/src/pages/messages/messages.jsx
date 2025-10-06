@@ -89,12 +89,12 @@ const Chat = () => {
 
     try {
         let sentMessageFromServer;
-        API.post('/user_message', { providerId , content: newMessage })
+        await API.post('/user_message', { providerId , content: newMessage })
         .then((res)=>{
             sentMessageFromServer = res.data;
         })
         .catch((err)=>{
-          throw new Error(`Failed to send message ${err.message || err}`);
+          throw new Error(`Failed to send message ${err.message || "--"}`);
         })
 
       // Replace the optimistic message with the real one from the server

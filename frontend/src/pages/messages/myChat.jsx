@@ -18,19 +18,19 @@ const MyChat = () => {
             }
 
             let data;
-            API.post('/my_chats')
+            await API.post('/my_chats')
             .then((res)=>{
               data = res.data;
             })
             .catch((err)=>{
-               throw new Error(`HTTP error!: ${err.message || err}`);
+               throw new Error(`HTTP error!: ${err?.message || err?.response?.status || "--"}`);
             })
 
             setChats(data); 
             console.log(data)
         } 
         catch (err) {
-            setError(err.message);
+            setError(err.message || "Failed to fetch chats" );
             console.error("Failed to fetch chats:", err);
         }
         finally {

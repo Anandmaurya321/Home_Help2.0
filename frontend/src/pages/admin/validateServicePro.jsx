@@ -28,13 +28,13 @@ const ValidateService = () => {
                  data = res.data
                 })
                 .catch((err)=>{
-                throw new Error(`Failed to fetch requests. Please check your network or login status : error: ${err.response?.status || err.message || err}`);
+                throw new Error(`Failed to fetch requests. Please check your network or login status : error: ${err.response?.status || err.message || "--"}`);
                 })
             setRequests(data);
         } 
         catch (err) {
             console.error('error yaha hai :' , err);
-            setError(err);
+            setError(err.message || "Facing problem in getting the data");
             
         } 
         finally {
@@ -50,12 +50,12 @@ const ValidateService = () => {
     // --- Internal function to delete a request from the server and UI ---
     const deleteRequestFromServer = async (id) => {
         let data ;
-            API.delete(`/deleteservicereq/${id}`)
+            await API.delete(`/deleteservicereq/${id}`)
             .then((res)=>{
             data = res.data
             })
             .catch((err)=>{
-            setError(err.message || err);
+            setError(err.message || "Facing Problem in deleting the data");
             console.log(err);
             })
         
@@ -91,20 +91,21 @@ const ValidateService = () => {
                 // add the service provider to main database
                 await API.post(`/validateservicepro`, {providerData})
                 .then((res)=>{
-                if (!res.data.name) throw new Error("Failed to add service provider.");
+                console.log(res.data);
+                if (!res.data._id) throw new Error("Failed to add service provider.");
                 })
                 .catch((err)=>{
-                setError(err)
+                console.log("There is error :" , err);
+                setError(err.message || "Something went wrong");
                 })
-
-                // If Successfully added , delete the request from validation queue ::
-                await deleteRequestFromServer(item._id);
+               
+               await deleteRequestFromServer(item._id);
 
                 alert('Service provider has been approved and added!');
             } 
             catch (err) {
                 alert("Something went wrong while approving the request!");
-                console.error(err.message || err);
+                console.error(err.message || "Something went wrong while approving the request!");
             } 
             finally {
                 setActionState({ id: null, loading: false });

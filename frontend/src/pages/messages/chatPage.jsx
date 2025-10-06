@@ -151,7 +151,7 @@ const ChatPage = () => {
         
         let savedMsg ;
 
-        API.post(endpoint, { body })
+        await API.post(endpoint, { body })
         .then((res)=>{
            savedMsg = res.data;  
         })
@@ -160,15 +160,15 @@ const ChatPage = () => {
         })
 
         
-      try{ 
-        const SenderId = (myRole==='user')? userId : providerId;
-        const ReceiverId = (otherParticipantRole === 'user')? userId : providerId;
-        Socket.emit('message' , {SenderId : SenderId , ReceiverId: ReceiverId})
-        console.log('Sending message to server')
-      }
-      catch(err){
-        console.log('Giving error in Broadcasting the message: ' , err)
-      }
+      // try{ 
+      //   const SenderId = (myRole==='user')? userId : providerId;
+      //   const ReceiverId = (otherParticipantRole === 'user')? userId : providerId;
+      //  // await Socket.emit('message' , {SenderId : SenderId , ReceiverId: ReceiverId})
+      //   console.log('Sending message to server')
+      // }
+      // catch(err){
+      //   console.log('Giving error in Broadcasting the message: ' , err)
+      // }
 
 
       // Replace the optimistic message with the final message from the server
@@ -203,12 +203,11 @@ const ChatPage = () => {
    
     try {
       const userId = LOGGED_IN_USER_ID;
-      API.put("/messages/deletedfor", { selectedMessageId, userId, deleteFromEveryone })
+      await API.put("/messages/deletedfor", { selectedMessageId, userId, deleteFromEveryone })
       .catch((err)=>{
-        console.log(err?.message || err);
+        console.log(err.message || err);
         throw new Error("Failed to delete messages");
       })
-
       setSelectedMessageId([]);
       fetchMessages({chatId , LOGGED_IN_USER_ID , SetMessages , SetIsLoading}); // refresh after delete
     } 
