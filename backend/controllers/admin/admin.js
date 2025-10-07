@@ -16,7 +16,7 @@ const Isadmin = async (req, res) => {
     const data = await Admin.findOne({ email: email , name : name});
 
     if (!data) { 
-        return res.json({ data: data  , valid: 0});
+        return res.json({ data: "Invalid Admin Request!"  , valid: 0});
     }
 
     const verificationcode = Math.floor(100000 + Math.random() * 900000).toString();
@@ -49,6 +49,4 @@ const Isadmin = async (req, res) => {
   
 }
 
-
 export default  Isadmin;
-
