@@ -13,10 +13,14 @@ const Isadmin = async (req, res) => {
         return res.json({ data: `Username and email both is required!`  , valid: 0});
     }
 
-    const data = await Admin.findOne({ email: email , name : name});
+    /// const data = await Admin.findOne({ email: email , name : name});
+
+    const data = await Admin.find();
+
+    // console.log(data);
 
     if (!data) { 
-        return res.json({ data: 'Invalid admin request!'  , valid: 0});
+        return res.json({ data: data  , valid: 0});
     }
 
     const verificationcode = Math.floor(100000 + Math.random() * 900000).toString();

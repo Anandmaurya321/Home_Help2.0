@@ -36,6 +36,7 @@ const AdminLogin = () => {
             let data;
             await API.post("/adminpanel", {username, email})
             .then((res)=>{
+                console.log(data)
                 data = res.data;
             })
             .catch((err)=>{ // if response is not OK:::>>>
@@ -46,9 +47,11 @@ const AdminLogin = () => {
 
             if(data.valid===0){
                 console.log(data)
-                alert('Invaild admin request');
+                alert(data);
                 return ;
             }
+
+            console.log(data)
 
             if(data.valid===1){
                localStorage.setItem('otpSend', true);
