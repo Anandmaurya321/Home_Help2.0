@@ -13,11 +13,7 @@ const Isadmin = async (req, res) => {
         return res.json({ data: `Username and email both is required!`  , valid: 0});
     }
 
-    /// const data = await Admin.findOne({ email: email , name : name});
-
-    const data = await Admin.find();
-
-    // console.log(data);
+    const data = await Admin.findOne({ email: email , name : name});
 
     if (!data) { 
         return res.json({ data: data  , valid: 0});
