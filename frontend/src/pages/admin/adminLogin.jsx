@@ -47,7 +47,7 @@ const AdminLogin = () => {
 
             if(data.valid===0){
                 console.log(data)
-                alert(data);
+                alert(data.data);
                 return ;
             }
 
