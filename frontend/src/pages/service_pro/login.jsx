@@ -1,6 +1,5 @@
 
 
-
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import API from '../../hooks/api'
@@ -28,12 +27,13 @@ const Login = () => {
 
         try {
             let data;
-            API.post("/servicepro_login", {email, password })
+            await API.post("/servicepro_login", {email, password })
             .then((res)=>{
               data = res.data;
             })
             .catch((err)=>{
-              throw new Error(err.message || `HTTP error! `);
+              console.log(err);
+              throw new Error(err.response.data.message || `HTTP error! `);
             })
 
             if (data.success===true) {
@@ -61,7 +61,7 @@ const Login = () => {
     };
 
     const ForgotPassword = async () => {
-        navigate('/forgotpassword');
+        navigate('/serviceproForgotPassword');
     }
 
     return (

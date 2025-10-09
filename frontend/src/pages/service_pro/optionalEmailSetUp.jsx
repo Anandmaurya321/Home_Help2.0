@@ -10,12 +10,12 @@ import API from '../../hooks/api'
 // --- Optional Email Setup Component ---
 // This component allows service providers to create a full account with email and password, or skip the step.
 const OptionalEmailSetup = () => {
+    console.log("optional email setUp is working")
     const navigate = useNavigate();
     const location = useLocation();
 
     // Get the service provider's ID from the previous page's state.
     const { data: serviceProviderId } = location.state || {};
-
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -47,12 +47,13 @@ const OptionalEmailSetup = () => {
 
         try {
             let result;
-            API.post('/servicepro_register',{ name, email, password, _id: serviceProviderId })
+            await API.post('/servicepro_register',{ name, email, password, _id: serviceProviderId })
             .then((res)=>{
              result = res.data;
              localStorage.setItem('otpSend', true);
              localStorage.setItem('email', email);
-             navigate('/verify_ser', { state: { result, _id: serviceProviderId } });
+             console.log("moving to verifyServie provider")
+             navigate('/verify_ser', { state: {data:{ result, _id: serviceProviderId}}});
             })
             .catch((err)=>{
                 setError(err || `Server error`);

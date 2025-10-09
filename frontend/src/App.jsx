@@ -15,10 +15,12 @@ import UserRegister from './pages/user/register'
 import UserEmailVeri from './pages/user/verifyEmail'
 import GiveReview from './pages/service_pro/reviewSection'
 import LoginUser from './pages/user/login'
-import ForgotPassword from './pages/general/forgotPassword' // now for user only:: need to place it in user section instead of general page section ::>>
+import UserForgotPassword from './pages/user/userForgotPass'// now for user only:: need to place it in user section instead of general page section ::>>
+import ServiceProForgotPassword from './pages/service_pro/serviceProforgotPassword'
 import VerifyNewUserPassword from './pages/user/verifyNewPassword'
+import VerifyNewServiceProPassword from './pages/service_pro/verifyNewPass'
 import AdminVerification from './pages/admin/admin_veri'
-import OptionalEmailSetupForServicePro from './pages/service_pro/register'
+import OptionalEmailSetupForServicePro from './pages/service_pro/optionalEmailSetUp'
 import VerifyServicePro from './pages/service_pro/verifyServicePro'
 import LoginServicePro from './pages/service_pro/login'
 import Chat from './pages/messages/messages'
@@ -65,8 +67,8 @@ function App() {
         <Route path='/adminpanel' element={<AdminLogin/>} className="adminpanel" />
         <Route path='/register' element={<UserRegister />} />
         <Route path='/login' element={<LoginUser/>} />
-        <Route path='/forgotpassword' element={<ForgotPassword />} />
-        <Route path='/forgotpasswordServicePro' element={<ForgotPassword/>} /> {/**need to fix yet */}
+        <Route path='/userforgotpassword' element={<UserForgotPassword/>} />
+        <Route path='/serviceproForgotPassword' element={<ServiceProForgotPassword/>} /> {/**need to fix yet */}
         <Route path='/additional_data' element={<OptionalEmailSetupForServicePro />} />
         <Route path='/verify_ser' element={<VerifyServicePro />} />
         <Route path='/servicepro_login' element={<LoginServicePro />} />
@@ -93,7 +95,8 @@ function App() {
           <Route path='/admin_veri' element={<AdminVerification />} />
           <Route path='/verifyemail' element={<UserEmailVeri/>} />
           {/* we have to create verification page of password for ServicePro also */}
-          <Route path='/verifynewpass' element={<VerifyNewUserPassword/>} /> 
+          <Route path='/verifyNewServiceProPassword' element={<VerifyNewServiceProPassword/>}/>
+          <Route path='/verifyNewUserPass' element={<VerifyNewUserPassword/>} /> 
         </Route>
       </Routes>
     </div>

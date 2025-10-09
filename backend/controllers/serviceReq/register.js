@@ -4,6 +4,7 @@
 import ServiceRequests from '../../model/serviceRequests.js'
 import bcrypt from 'bcrypt'
 import SendMail from "../../middleware/email.js"
+
 const Register = async(req ,res)=>{
    try {
 
@@ -41,7 +42,6 @@ const Register = async(req ,res)=>{
 
     if(status){  
        console.log("otp Send")
-     
        return res.status(200).json({
             email,
             password:hashpass, // password is saved in hash form.....
@@ -58,5 +58,4 @@ const Register = async(req ,res)=>{
 }
 
 export default Register;
-
 

@@ -12,11 +12,15 @@ import searchServicePro from './../controllers/servicePro/search_servicePro.js'
 import searchById from './../controllers/servicePro/searchById.js'
 import validateServicePro from './../controllers/servicePro/validate_servicePro.js'
 import viewServicePro from './../controllers/servicePro/view_servicePro.js'
+import findServicePro from '../controllers/servicePro/findServicePro.js';
+import UpdatePassword from '../controllers/servicePro/updatePassword.js';
 
 
 route.post('/validateservicePro' , verifyToken , validateServicePro)
 route.delete('/deleteservice/:id' , verifyToken , deleteSevicePro)
 route.post('/servicepro_login' , login)
+route.post('/findServicePro'  , findServicePro);
+route.put('/update_ServicePro_Password' , UpdatePassword)
 route.get('/viewservicepro/:service', viewServicePro)
 route.get('/allservice/:key' , searchServicePro)
 route.get('/allservice' , allServicePro)

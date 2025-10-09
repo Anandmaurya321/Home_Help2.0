@@ -1,14 +1,13 @@
 
 
-
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { CheckIcon , ExclamationIcon } from '../../components/general/forgotPassword';
+import { CheckIcon , ExclamationIcon } from '../../components/user/forgotPassword';
 import API from '../../hooks/api'
 
 
 
-const ForgotPassword = () => {
+const UserForgotPassword = () => {
   
   const navigate = useNavigate();
 
@@ -53,7 +52,7 @@ const ForgotPassword = () => {
     
     try {
         let data 
-        API.post("/findUser", {email})
+        await API.post("/findUser", {email})
         .then((res)=>{
             data = res.data;
         })
@@ -77,12 +76,12 @@ const ForgotPassword = () => {
 
     try {
       
-        API.post('/register', {name,email,password, forgotPassword: true})
+        await API.post('/register', {name,email,password, forgotPassword: true})
         .then((res)=>{
         localStorage.setItem('otpSend', true);
         const data = res.data
         console.log(data); 
-        navigate('/verifynewpass', { state: { data } }); // you are sending hashed password here :::>>
+        navigate('/verifyNewUserPass', { state: { data } }); // you are sending hashed password here :::>>
         })
         .catch((err)=>{
              console.log("giving error as :" , err)
@@ -213,7 +212,7 @@ const ForgotPassword = () => {
 };
 
 
-export default ForgotPassword; 
+export default UserForgotPassword; 
 
 
 

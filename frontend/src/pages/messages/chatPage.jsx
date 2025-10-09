@@ -151,24 +151,13 @@ const ChatPage = () => {
         
         let savedMsg ;
 
-        await API.post(endpoint, { body })
+        await API.post(endpoint, body )
         .then((res)=>{
            savedMsg = res.data;  
         })
         .catch((err)=>{
         throw new Error(err?.message || "Message sending failed");
         })
-
-        
-      // try{ 
-      //   const SenderId = (myRole==='user')? userId : providerId;
-      //   const ReceiverId = (otherParticipantRole === 'user')? userId : providerId;
-      //  // await Socket.emit('message' , {SenderId : SenderId , ReceiverId: ReceiverId})
-      //   console.log('Sending message to server')
-      // }
-      // catch(err){
-      //   console.log('Giving error in Broadcasting the message: ' , err)
-      // }
 
 
       // Replace the optimistic message with the final message from the server

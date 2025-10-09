@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import API from '../../hooks/api'
 
@@ -63,9 +64,9 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
     setIsLoading(true);
     setError('');
     try {
-      // NOTE: This assumes your '/register' endpoint can be called again to resend the email.
+
         let responseData
-        await API.post('/register',{name,email,password,forgotPassword: true})
+        await API.post('/servicepro_register',{name,email,password,forgotPassword: true})
         .then((res)=>{
          responseData = res.data
         })
@@ -73,11 +74,6 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
           throw new Error(err.message || 'Failed to resend code.');
         })
 
-      
-      // Update the state with the new code from the backend 
-      // backend send a new otp on the user gmail and send it here also in response
-      // we update out verification code :: but not the password
-      // still we have single hashed required password:: 
       localStorage.setItem('otpSend', true);
       setVerificationcode(responseData.verificationcode);
       console.log("New verification code sent:", responseData.verificationcode);
@@ -144,17 +140,15 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
     setError('');
     setIsLoading(true);
 
-    // IMPORTANT: Client-side verification is insecure. In a real production app,
-    // you should send the `code` to your backend and let the server verify it.
-    // The current logic follows the original structure provided.
+   
     try {
-      if (code === verificationcode) { // verification code is already updated in all the possible cases :::
+      if (code === verificationcode) { 
         console.log('Verified successfully on client. Updating password :: ');
 
         localStorage.removeItem('otpSend')
 
         let data;
-        await API.put('/update_Password', { email, password })
+        await API.put('/update_ServicePro_Password', { email, password })  
         .then((res)=>{
           data = res.data
         })
@@ -162,14 +156,10 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
           throw new Error(err.message || 'Failed to Update Password.');
         })
 
-        
-
         localStorage.setItem('loginToken' , data.auth)
-        
+        localStorage.setItem('ServicePro' , true)
         console.log("Password Updated", data);
- 
         onVerifySuccess(); // Signal success to parent component
-
       } 
 
       else {
@@ -270,7 +260,7 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
 };
 
 
-
-
 export {VerifyNewPassword}
+
+
 

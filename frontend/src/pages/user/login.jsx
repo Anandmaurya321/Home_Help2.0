@@ -78,7 +78,7 @@ const Login = () => {
      */
 
     const ForgotPassword = async () => {
-        navigate('/forgotpassword');
+        navigate('/userforgotpassword');
     }
 
     return (

@@ -1,13 +1,14 @@
 
+
 import React, { useState, useRef, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { VerifyNewPassword } from '../../components/user/verifyNewPassword';
+import { VerifyNewPassword } from '../../components/service_pro/verifyNewPass';
 
-export default function VerifyNewUserPassword() {
+export default function VerifyNewServiceProPassword() {
   // Restoring react-router-dom hooks
   const location = useLocation();
   const navigate = useNavigate();
-  const { data } = location.state || {};
+  const {data} = location.state || {}; 
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -23,8 +24,8 @@ export default function VerifyNewUserPassword() {
       console.log("Data loaded. Verification code is:", data.verificationcode);
     }
     else {
-      // If no data is passed from a previous page, redirect to register
-      navigate('/register');
+      alert('We are not receving all the required field !....')
+      navigate('/serviceproForgotPassword');  
     }
   }, [data, navigate]);   // taking the data here
 
@@ -44,7 +45,8 @@ export default function VerifyNewUserPassword() {
   if (page === 'success') {
     localStorage.setItem('name', name);
     localStorage.setItem('email', email);
-    localStorage.setItem('isLoggedIn', 'true');
+    localStorage.setItem('isLoggedIn', true);
+    localStorage.setItem('ServicePro' , true);
     // This tells the Nav component (and any other component) that the login state has changed.
     window.dispatchEvent(new Event('storageChange'));
     return (
