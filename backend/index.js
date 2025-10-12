@@ -5,11 +5,20 @@ import dotenv from 'dotenv'
 import ConnectDb from './config/db.js';
 dotenv.config();  // make available .env file :: 
 
-ConnectDb();      // connect db
+ConnectDb().then(() => console.log("DB connected")).catch(err => {
+  console.error("DB connection failed:", err);
+  process.exit(1); // stop server if db fails::
+});
+
 const app = express();
 const PORT = process.env.PORT || 8000;   // port at which it run:: >>>
 
-app.use(cors())
+app.use(cors({
+  origin: "https://home-help2-0.vercel.app",
+  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
+  allowedHeaders: ["Content-Type","Authorization"]
+}));
+
 app.use(express.json());
 
 import admin from './routes/admin.js'
@@ -36,9 +45,6 @@ console.log("MAIL_SEND_BY_EMAIL:", process.env.MAIL_SEND_BY_EMAIL);
 
 
 app.listen(PORT , ()=>{console.log("Our server is running" , PORT)})
-
-
-
 
 
 
