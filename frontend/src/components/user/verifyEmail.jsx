@@ -1,6 +1,5 @@
-
 import API from '../../hooks/api'
-
+import React, { useState, useRef, useEffect } from 'react';
 
 const LockIcon = () => (
   <svg
@@ -21,7 +20,6 @@ const LockIcon = () => (
 );
 
 
-
 // The OTP Verification Component
 const VerifyEmail = ({ onVerifySuccess, data }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
@@ -29,64 +27,49 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
   const [isLoading, setIsLoading] = useState(false);
   const [resendTimer, setResendTimer] = useState(30);
   const inputRefs = useRef([]);
-  const { name, email, password , id} = data;
+  const { name, email, password } = data;
   const [verificationcode, setVerificationcode] = useState(data.verificationcode);
 
-  
   useEffect(() => {
-    if (data.verificationcode) {
-      setVerificationcode(data.verificationcode);
-    }
+    if (data.verificationcode) setVerificationcode(data.verificationcode);
   }, [data.verificationcode]);
-
 
   useEffect(() => {
     let timer;
     if (resendTimer > 0) {
       timer = setTimeout(() => setResendTimer(resendTimer - 1), 1000);
     } else {
-      // When the timer reaches 0, the code expires.
       setVerificationcode(null);
     }
     return () => clearTimeout(timer);
   }, [resendTimer]);
 
 
-
+  // --- RESEND OTP ---
   const handleResend = async () => {
-    // This function calls the backend to send a new verification code.
-    console.log("Resending OTP...");  // as the data is not save in database:: no problem :: we have all data :: just make new register:: save data only when it get verified:::
     setIsLoading(true);
     setError('');
+
     try {
-        let responseData;
-      API.post('/register', {name, email, password})
-      .then((res)=>{
-       responseData = res.data;
-      })
-      .catch((err)=>{
-       throw new Error(err.message || err || 'Failed to resend code.');
-      })
+      console.log("Resending OTP...");
+      const res = await API.post('/register', { name, email, password });
+      const responseData = res.data;
 
       localStorage.setItem('otpSend', true);
       setVerificationcode(responseData.verificationcode);
-      
       setResendTimer(90);
-      setOtp(new Array(6).fill("")); 
+      setOtp(new Array(6).fill(""));
       inputRefs.current[0]?.focus();
-
-    } 
-    catch (err) {
+    } catch (err) {
       console.error("Error in handleResend:", err);
-      setError(err.message || "Could not resend OTP.");
-    } 
-    finally {
+      setError(err.response?.data?.message || err.message || "Could not resend OTP.");
+    } finally {
       setIsLoading(false);
     }
   };
 
 
-  // --- Input Handling Logic ---
+  // --- OTP Input Handling ---
   const handleChange = (element, index) => {
     const value = element.value;
     if (isNaN(value)) return;
@@ -116,8 +99,8 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
     inputRefs.current[5].focus();
   };
 
-  
-  // --- Verification Logic ---
+
+  // --- VERIFY OTP ---
   const handleVerify = async () => {
     const code = otp.join("");
     if (code.length < 6) {
@@ -125,7 +108,6 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
       return;
     }
 
-    // Check if the code has expired (set to null by the timer)
     if (verificationcode === null) {
       setError("Your OTP has expired. Please request a new one.");
       return;
@@ -134,50 +116,36 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
     setError('');
     setIsLoading(true);
 
-    // IMPORTANT: Client-side verification is insecure. In a real production app,
-    // you should send the `code` to your backend and let the server verify it.
-    // The current logic follows the original structure provided.
     try {
       if (code === verificationcode) {
-        console.log('Verified successfully on client. Saving data to backend...');
+        console.log('Verified successfully. Saving data to backend...');
         localStorage.removeItem('otpSend');
-          let data
-          API.post("/save_data", { name, email, password })
-          .then((res)=>{
-           data = res.data
-           console.log("Backend save response:", data);
-          })
-          .catch((err)=>{
-           throw new Error(err.message || 'Failed to save user data.');
-          })
+
+        const res = await API.post("/save_data", { name, email, password });
+        const responseData = res.data;
 
         localStorage.setItem("name", name);
-        localStorage.setItem('email', email)
+        localStorage.setItem('email', email);
         localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('loginToken', data.auth)
+        localStorage.setItem('loginToken', responseData.auth);
 
-        // This tells the Nav component (and any other component) that the login state has changed.
         window.dispatchEvent(new Event('storageChange'));
-        
-        onVerifySuccess(); // Signal success to parent component
-
-      }
-       else {
+        onVerifySuccess();
+      } else {
         console.log('Verification failed. Expected:', verificationcode, 'Got:', code);
         setError("Invalid OTP. Please try again.");
         setOtp(new Array(6).fill(""));
         inputRefs.current[0].focus();
       }
-    }
-    catch (err) {
+    } catch (err) {
       console.error("Verification error:", err);
-      setError(err.message || "An error occurred. Please try again later.");
-    }
-    finally {
+      setError(err.response?.data?.message || err.message || "An error occurred. Please try again later.");
+    } finally {
       setIsLoading(false);
     }
   };
-  
+
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-100 font-sans">
       <div className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-lg md:p-8">
@@ -208,9 +176,7 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
         </div>
 
         {/* Error Message */}
-        {error && (
-          <p className="mt-4 text-sm font-semibold text-red-500">{error}</p>
-        )}
+        {error && <p className="mt-4 text-sm font-semibold text-red-500">{error}</p>}
 
         {/* Verify Button */}
         <div className="mt-8">
@@ -259,9 +225,7 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
   );
 };
 
-export {VerifyEmail}
-
-
+export { VerifyEmail };
 
 // send the verification code to your server for verification:::>>>
 // do not send the verification code/otp to the frontend
