@@ -243,7 +243,7 @@ const ProviderDetails = ({ provider, onImageClick  , providerId}) => {
             {/* NEW: Chat button added here */}
             <div className="mt-8">
                 <button
-                    onClick={() => navigate('/messages' , {state : {providerId}})}
+                    onClick={() => navigate('/firstMessage' , {state : {providerId}})}
                     className="w-full flex items-center justify-center space-x-3 bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transform hover:-translate-y-0.5 transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                     aria-label="Chat with provider"
                 >

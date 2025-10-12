@@ -1,165 +1,118 @@
 
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
-import API from '../../hooks/api'
+import API from '../../hooks/api';
 
 const Chat = () => {
   const location = useLocation();
   const { providerId } = location.state || {};
 
-  // State for messages, now starts empty
-  const [chatHistory, setChatHistory] = useState([]);
+  // State for the new message input
   const [newMessage, setNewMessage] = useState('');
-  
-  // Separate loading states for fetching history and sending a new message
-  const [isHistoryLoading, setIsHistoryLoading] = useState(true);
-  const [isSending, setIsSending] = useState(false);
 
+  // State to hold the messages shown on this screen (will only be the one we send)
+  const [messages, setMessages] = useState([]);
+
+  // State for loading and error handling
+  const [isSending, setIsSending] = useState(false);
+  const [error, setError] = useState(null);
+
+  // Ref for auto-scrolling to the bottom
   const messagesEndRef = useRef(null);
 
-   const fetchChatHistory = async () => {
-      if (!providerId) {
-        console.error("No providerId found. Cannot fetch chat history.");
-        setIsHistoryLoading(false);
-        return;
-      }
-
-      setIsHistoryLoading(true);
-      
-      try {
-        const token = localStorage.getItem('loginToken');
-        
-        // **TODO: UNCOMMENT AND REPLACE WITH YOUR REAL API ENDPOINT**
-        // The endpoint should likely accept the providerId to fetch the correct conversation.
-        /*
-        const res = await fetch(`http://localhost:5000/api/messages/${providerId}`, {
-          headers: {
-            'Authorization': `Bearer ${token}`
-          }
-        });
-
-        if (!res.ok) {
-          throw new Error('Failed to fetch chat history');
-        }
-
-        const data = await res.json();
-        // Assuming the API returns an object like { messages: [...] }
-        setChatHistory(data.messages || []); 
-        */
-
-      }
-       catch (err) {
-        console.error("Error fetching chat history:", err);
-        // Optionally set an error state to show in the UI
-      } 
-      finally {
-        setIsHistoryLoading(false);
-      }
-    };
-
-  // --- Effect to Fetch Chat History ---
-  useEffect(() => {
-    fetchChatHistory();
-  }, [providerId]);  //Re-fetch when the providerId changes
-
   // --- Auto-scrolling Effect ---
+  // Scrolls to the bottom whenever a new message is added
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [chatHistory]);
+  }, [messages]);
 
-  // --- Function to Send a New Message ---     
+  // --- Function to Send a New Message ---
   const handleSendMessage = async (e) => {
     e.preventDefault();
 
+    // Basic validation
     if (!providerId || !newMessage.trim()) {
       return;
     }
 
-    const optimisticMessage = {
-      id: Date.now(), // Temporary client-side ID
-      content: newMessage,
-      sender: 'user', // Assumes the sender is the current user
-    };
-
-    // Optimistically update the UI
-    setChatHistory(prevHistory => [...prevHistory, optimisticMessage]);
-    setNewMessage('');
     setIsSending(true);
+    setError(null); // Clear any previous errors
 
     try {
-        let sentMessageFromServer;
-        await API.post('/user_message', { providerId , content: newMessage })
-        .then((res)=>{
-            sentMessageFromServer = res.data;
-        })
-        .catch((err)=>{
-          throw new Error(`Failed to send message ${err.message || "--"}`);
-        })
+      const res = await API.post('/user_message', { providerId, content: newMessage });
 
-      // Replace the optimistic message with the real one from the server
-      setChatHistory(prevHistory => 
-        prevHistory.map(msg => 
-          msg.id === optimisticMessage.id ? sentMessageFromServer : msg
-        )
-      );
-    }
-    catch (err) {
+      // On success, add the message returned from the server to our local display
+      setMessages(prevMessages => [...prevMessages, res.data]);
+
+      setNewMessage(''); // Clear the input field
+
+    } catch (err) {
       console.error("Error sending message:", err);
-      // Revert the optimistic update on failure
-      setChatHistory(prevHistory => prevHistory.filter(msg => msg.id !== optimisticMessage.id));
-      // Optionally, show an error icon on the failed message in the UI
-    } 
-    finally {
-      setIsSending(false);
+      setError('Failed to send message. Please try again.'); // Set a user-friendly error message
+    } finally {
+      setIsSending(false); // Re-enable the form
     }
   };
 
   return (
     <div className="flex flex-col h-[80vh] w-full max-w-2xl mx-auto my-8 font-sans border border-gray-200 rounded-lg overflow-hidden shadow-lg">
-      
-      {/* Messages Area */}
+
+      {/* --- Messages Area --- */}
       <div className="flex-grow p-5 overflow-y-auto bg-gray-50">
-        {isHistoryLoading ? (
-          <div className="flex justify-center items-center h-full text-gray-500">Loading messages...</div>
-        ) : !providerId ? (
-          <div className="flex justify-center items-center h-full text-gray-500">Select a conversation to begin.</div>
+        {!providerId ? (
+          <div className="flex justify-center items-center h-full text-gray-500">
+            Cannot start a conversation. No provider selected.
+          </div>
         ) : (
           <>
-            {chatHistory.map((msg) => {
-              const isUser = msg.sender === 'user';
-              return (
-                <div key={msg.id} className={`flex mb-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
-                  <div 
-                    className={`py-2 px-4 rounded-2xl max-w-[70%] break-words ${
-                      isUser 
-                        ? 'bg-blue-500 text-white rounded-tr-md' 
-                        : 'bg-gray-200 text-black rounded-tl-md'
-                    }`}
-                  >
-                    {msg.content}
-                  </div>
+            {/* --- NEW: Informational Note --- */}
+            {/* This note only shows when no messages have been sent on this page yet */}
+            {messages.length === 0 && (
+              <div className="text-center p-4 mb-4 text-sm text-gray-500 bg-gray-100 rounded-lg">
+                <p className="font-semibold">You're starting a new conversation! 💬</p>
+                <p className="mt-1">
+                  If you've chatted before, your full history is in the <strong>Messages</strong> tab.
+                </p>
+              </div>
+            )}
+
+            {/* Map over the locally stored messages array */}
+            {messages.map((msg, index) => (
+              <div
+                key={msg.id || index}
+                className="flex mb-3 justify-end"
+              >
+                <div className="py-2 px-4 rounded-2xl max-w-[70%] break-words bg-blue-500 text-white rounded-tr-md">
+                  {msg.content}
                 </div>
-              );
-            })}
+              </div>
+            ))}
+            {/* This empty div is the target for our auto-scroll */}
             <div ref={messagesEndRef} />
           </>
         )}
       </div>
 
-      {/* Message Input Form */}
+      {/* --- Error Display --- */}
+      {error && (
+        <div className="p-2 text-center text-red-600 bg-red-100 border-t border-gray-200">
+          {error}
+        </div>
+      )}
+
+      {/* --- Message Input Form --- */}
       <form className="flex items-center p-3 border-t border-gray-200 bg-white" onSubmit={handleSendMessage}>
         <input
           type="text"
           className="flex-grow border border-gray-300 rounded-full py-2 px-4 text-base outline-none focus:border-blue-500 transition-colors duration-200"
-          placeholder={providerId ? "Type a message..." : "Cannot send messages"}
+          placeholder={providerId ? "Type your first message..." : "Cannot send messages"}
           value={newMessage}
           onChange={(e) => setNewMessage(e.target.value)}
-          disabled={isSending || !providerId || isHistoryLoading}
+          disabled={isSending || !providerId}
         />
-        <button 
-          type="submit" 
-          className="ml-3 w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full bg-blue-500 text-white cursor-pointer transition-colors duration-200 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed" 
+        <button
+          type="submit"
+          className="ml-3 w-11 h-11 flex-shrink-0 flex items-center justify-center rounded-full bg-blue-500 text-white cursor-pointer transition-colors duration-200 hover:bg-blue-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
           disabled={isSending || !newMessage.trim() || !providerId}
         >
           {/* Send Icon SVG */}
@@ -176,5 +129,4 @@ const Chat = () => {
 export default Chat;
 
 
-
-
+// Thanku:::>>>>

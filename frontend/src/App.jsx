@@ -72,7 +72,7 @@ function App() {
         <Route path='/additional_data' element={<OptionalEmailSetupForServicePro />} />
         <Route path='/verify_ser' element={<VerifyServicePro />} />
         <Route path='/servicepro_login' element={<LoginServicePro />} />
-        <Route path='/messages' element={<Chat/>} />
+        <Route path='/firstMessage' element={<Chat/>} />
 
         {/* for admin only */}
         <Route element={<PrivateComponentsforAdmin />}>
