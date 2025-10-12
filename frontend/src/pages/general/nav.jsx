@@ -68,7 +68,6 @@ const Nav = () => {
 
     // handling full logout::
     const handleLogout = () => {
-        navigate('/')
         localStorage.clear();  // clear everything for full logout::>>
         window.dispatchEvent(new Event('storageChange')); 
         dispatch(logoutUser());
