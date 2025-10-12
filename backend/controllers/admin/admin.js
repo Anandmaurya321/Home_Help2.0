@@ -23,7 +23,7 @@ const Isadmin = async (req, res) => {
 
     console.log('data is found' , data)
 
-    const status = await SendMail(name , email , verificationcode)
+    const status = await SendMail({name , email , verificationcode})
     if(status) console.log('otp sent to email')
 
     if(!status){
@@ -36,7 +36,7 @@ const Isadmin = async (req, res) => {
             role: data.role
         };
 
-        console.log(payload)
+    console.log(payload)
 
     const token = Token({ name: data.name, email: data.email , role:'admin'});
     console.log('our token is :', token)
