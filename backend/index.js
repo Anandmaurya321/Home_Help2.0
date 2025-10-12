@@ -13,10 +13,24 @@ ConnectDb().then(() => console.log("DB connected")).catch(err => {
 const app = express();
 const PORT = process.env.PORT || 8000;   // port at which it run:: >>>
 
+const allowedOrigins = [
+  "http://localhost:5173",              // your local frontend
+  "https://home-help2-0.vercel.app"     // your deployed frontend
+];
+
 app.use(cors({
-  origin: "https://home-help2-0.vercel.app",
-  methods: ["GET","POST","PUT","DELETE","OPTIONS"],
-  allowedHeaders: ["Content-Type","Authorization"]
+  origin: function (origin, callback) {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"]
 }));
 
 app.use(express.json());
