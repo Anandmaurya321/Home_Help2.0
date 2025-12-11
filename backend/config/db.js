@@ -1,5 +1,5 @@
 
-// Connect the DataBase::::>>>>>>
+// Connect the DataBase::::>>>>>
 
 import mongoose from 'mongoose'
 const ConnectDb = async()=>{
