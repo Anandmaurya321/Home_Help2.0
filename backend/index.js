@@ -15,7 +15,8 @@ const PORT = process.env.PORT || 8000;   // port at which it run:: >>>
 
 const allowedOrigins = [
   "http://localhost:5173",              // your local frontend
-  "https://home-help2-0.vercel.app"     // your deployed frontend
+  "https://home-help2-0.vercel.app",    // your deployed frontend
+  "https://home-help2-0-2plim4f1t-anands-projects-64ad675c.vercel.app"
 ];
 
 app.use(cors({
