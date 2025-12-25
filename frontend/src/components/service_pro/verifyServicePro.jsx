@@ -61,31 +61,22 @@ const Verify_ser = ({ onVerifySuccess, data }) => {
   /** We are only saving the data in database when it get verified hence if a user is failed
    * its verification , we already have all the required data so we call the same register api.
    */
+
   const handleResend = async () => {
-    console.log("Resending OTP...");
     setIsLoading(true);
     setError('');
+    console.log("resending request")
     try {
-      let responseData;
-      API.post('/servicepro_register',{ name, email, password })
-      .then((res)=>{
-       responseData = res;
-      })
-      .catch((err)=>{
-       throw new Error(err.message || 'Failed to resend code.');
-      })
-
-      // Update the state with the new code from the backend
+      const responseData = await API.post('/servicepro_register',{ name, email, password });
       localStorage.setItem('otpSend', true);
-      setVerificationcode(responseData.verificationcode);
-
+      setVerificationcode(responseData.data.verificationcode);
       setResendTimer(90); // Reset timer
       setOtp(new Array(6).fill("")); // Clear input fields
       inputRefs.current[0]?.focus();
     } 
     catch (err) {
       console.error("Error in handleResend:", err);
-      setError(err.message || "Could not resend OTP.");
+      setError(err.message || "Could not resend OTP!");
     } 
     finally {
       setIsLoading(false);
@@ -125,7 +116,9 @@ const Verify_ser = ({ onVerifySuccess, data }) => {
 
   // --- Verification Logic ---
   const handleVerify = async () => {
+   
     const code = otp.join("");
+    
     if (code.length < 6) {
       setError("Please enter the complete 6-digit OTP.");
       return;
@@ -143,25 +136,21 @@ const Verify_ser = ({ onVerifySuccess, data }) => {
     
     // The current logic follows the original structure provided.
     try {
+
       if (code === verificationcode) {
+        
         console.log('Verified successfully on client. Saving data to backend...');
+       
         localStorage.removeItem('otpSend');
-        // Now, call the backend to finalize the user's status
-        console.log(_id);
-        let status
-        API.put("/addEmailPass", {name,email,password, _id  })
-        .then((res)=>{
-         console.log(res.data , res.status , res.statusText)
-        })
-        .catch((err)=>{
-         throw new Error(err.message || 'Failed to add email and password.');
-        })
+
+        await API.put("/addEmailPass", {name,email,password, _id })
        
         console.log("Email and Password are added")
 
         onVerifySuccess(); // Signal success to parent component
 
       } 
+      
       else {
         console.log('Verification failed !');
         setError("Invalid OTP. Please try again.");
@@ -169,13 +158,16 @@ const Verify_ser = ({ onVerifySuccess, data }) => {
         inputRefs.current[0].focus();
       }
     } 
+
     catch (err) {
       console.error("Verification error:", err);
       setError(err.message || "An error occurred. Please try again later.");
     } 
+
     finally {
       setIsLoading(false);
     }
+
   };
 
   return (
@@ -261,5 +253,6 @@ const Verify_ser = ({ onVerifySuccess, data }) => {
 
 
 export {Verify_ser}
+
 
 

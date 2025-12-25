@@ -25,7 +25,6 @@ export default function App() {
       setPassword(data.password);
       setVerificationcode(data.verificationcode);
       setId(data._id);
-      console.log("Data loaded. Verification code is:", data.verificationcode);
     }
     else {
       // If no data is passed from a previous page, redirect to register

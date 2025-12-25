@@ -80,7 +80,6 @@ const UserForgotPassword = () => {
         .then((res)=>{
         localStorage.setItem('otpSend', true);
         const data = res.data
-        console.log(data); 
         navigate('/verifyNewUserPass', { state: { data } }); // you are sending hashed password here :::>>
         })
         .catch((err)=>{

@@ -25,7 +25,7 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [resendTimer, setResendTimer] = useState(30);
+  const [resendTimer, setResendTimer] = useState(120);
   const inputRefs = useRef([]);
   const { name, email, password } = data;
   const [verificationcode, setVerificationcode] = useState(data.verificationcode);
@@ -57,7 +57,7 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
 
       localStorage.setItem('otpSend', true);
       setVerificationcode(responseData.verificationcode);
-      setResendTimer(90);
+      setResendTimer(120);
       setOtp(new Array(6).fill(""));
       inputRefs.current[0]?.focus();
     } catch (err) {
@@ -132,13 +132,11 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
         window.dispatchEvent(new Event('storageChange'));
         onVerifySuccess();
       } else {
-        console.log('Verification failed. Expected:', verificationcode, 'Got:', code);
         setError("Invalid OTP. Please try again.");
         setOtp(new Array(6).fill(""));
         inputRefs.current[0].focus();
       }
     } catch (err) {
-      console.error("Verification error:", err);
       setError(err.response?.data?.message || err.message || "An error occurred. Please try again later.");
     } finally {
       setIsLoading(false);

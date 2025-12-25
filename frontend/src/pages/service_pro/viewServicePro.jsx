@@ -26,13 +26,11 @@ const ViewServicePro = () => {
             // wait untill you get your response:::>>>> otherwise it pass [] to next cause unexpected behaviour
             await API.get('/allservice')
             .then((res)=>{
-             console.log(res.status , res.data)
              data = res.data
             })
             .catch((err)=>{
             throw new Error(`Network response was not ok: ${err.response.status}`);
             })
-            console.log(data)
             const uniqueServices = [...new Set(data.map(item => item.service).filter(Boolean))];
             setServices(uniqueServices);
         } 

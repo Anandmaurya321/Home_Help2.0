@@ -21,7 +21,6 @@ export default function VerifyNewServiceProPassword() {
       setPassword(data.password); // hashed password ::: 
       setVerificationcode(data.verificationcode); // verification code :::
       setId(data._id);
-      console.log("Data loaded. Verification code is:", data.verificationcode);
     }
     else {
       alert('We are not receving all the required field !....')

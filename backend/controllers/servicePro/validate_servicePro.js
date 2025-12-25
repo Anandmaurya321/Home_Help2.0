@@ -15,4 +15,3 @@ const ValidateServicePro = async(req , res)=>{
 
 export default ValidateServicePro;
 
-

@@ -22,7 +22,6 @@ export default function AdminVerification() {
       setName(data.name);
       setEmail(data.email);
       setVerificationcode(data.verificationcode);
-      console.log("Data loaded. Verification code is:", data.verificationcode);
     }
     else {
       // If no data is passed from a previous page, redirect to register

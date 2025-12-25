@@ -36,7 +36,7 @@ const Register = async(req ,res)=>{
     
     const verificationcode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    const status =  SendMail(name , email , verificationcode)
+    const status =  SendMail({name , email , verificationcode})
 
     if(status){  
        console.log("otp Sending")

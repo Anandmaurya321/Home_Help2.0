@@ -24,7 +24,6 @@ export default function VerifyServicePro() {
       setPassword(result.password);
       setVerificationcode(result.verificationcode);
       console.log("_id "  , _id)
-      console.log("result loaded. Verification code is:", result.verificationcode);
     }
     else {
       // If no result is passed from a previous page, redirect to register

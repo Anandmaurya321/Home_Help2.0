@@ -30,7 +30,7 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [resendTimer, setResendTimer] = useState(30);
+  const [resendTimer, setResendTimer] = useState(120);
   const inputRefs = useRef([]);
 
   const { name, email, password } = data;
@@ -80,9 +80,8 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
       // still we have single hashed required password:: 
       localStorage.setItem('otpSend', true);
       setVerificationcode(responseData.verificationcode);
-      console.log("New verification code sent:", responseData.verificationcode);
 
-      setResendTimer(90); // Reset timer
+      setResendTimer(120); // Reset timer
       setOtp(new Array(6).fill("")); // Clear input fields
       inputRefs.current[0]?.focus();
 
@@ -149,7 +148,6 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
     // The current logic follows the original structure provided.
     try {
       if (code === verificationcode) { // verification code is already updated in all the possible cases :::
-        console.log('Verified successfully on client. Updating password :: ');
 
         localStorage.removeItem('otpSend')
 
@@ -166,21 +164,18 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
 
         localStorage.setItem('loginToken' , data.auth)
         
-        console.log("Password Updated", data);
  
         onVerifySuccess(); // Signal success to parent component
 
       } 
 
       else {
-        console.log('Verification failed. Expected:', verificationcode, 'Got:', code);
         setError("Invalid OTP. Please try again.");
         setOtp(new Array(6).fill(""));
         inputRefs.current[0].focus();
       }
     } 
     catch (err) {
-      console.error("Verification error:", err);
       setError(err.message || "An error occurred. Please try again later.");
     } 
     finally {

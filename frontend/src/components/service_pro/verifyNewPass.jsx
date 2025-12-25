@@ -76,7 +76,6 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
 
       localStorage.setItem('otpSend', true);
       setVerificationcode(responseData.verificationcode);
-      console.log("New verification code sent:", responseData.verificationcode);
 
       setResendTimer(90); // Reset timer
       setOtp(new Array(6).fill("")); // Clear input fields
@@ -163,7 +162,6 @@ const VerifyNewPassword = ({ onVerifySuccess, data }) => {
       } 
 
       else {
-        console.log('Verification failed. Expected:', verificationcode, 'Got:', code);
         setError("Invalid OTP. Please try again.");
         setOtp(new Array(6).fill(""));
         inputRefs.current[0].focus();

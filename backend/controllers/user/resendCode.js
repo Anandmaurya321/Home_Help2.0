@@ -33,7 +33,7 @@ const Resend_code = async(req ,res)=>{
         }
     );
     
-    const status =  SendMail(name , email , verificationcode)
+    const status =  SendMail({name , email , verificationcode})
 
     if(status){  // if we are able to send the mail means ... Given data is ok 
        user_data.save(); // we save the data here and give the success response

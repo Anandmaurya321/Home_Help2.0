@@ -29,12 +29,12 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [resendTimer, setResendTimer] = useState(30);
+  const [resendTimer, setResendTimer] = useState(120);
   const inputRefs = useRef([]);
 
-  const { name, email} = data;  // extracting the constant data::>>>
+  const { name, email } = data;  // extracting the constant data::>>>
   const [verificationcode, setVerificationcode] = useState(data.verificationcode); // extracting the useState variables::>>
-  const [token , setToken] = useState(data.token);
+  const [token, setToken] = useState(data.token);
   // --- Resend Timer and Code Expiration Logic ---
   useEffect(() => {
     if (data.verificationcode) {
@@ -57,37 +57,30 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
 
   // for resending of verification code::>>
   const handleResend = async () => {
-    // This function calls the backend to send a new verification code.
-    console.log("Resending OTP...");
     setIsLoading(true);
-    setError('');
-    
+
     try {
-      let responseData
+      const res = await API.post("/adminpanel", {
+        username: name,
+        email,
+      });
 
-      API.post("/adminpanel", { username:name , email })
-      .then((res)=>{
-        responseData = res.data
-      })
-      .catch((err)=>{
-        throw new Error(err.message || 'Failed to resend code.');
-      })
+      const responseData = res.data;
 
-      if(responseData.valid===0){
-         console.log(responseData);
-         return;
+      if (responseData.valid === 0) {
+        console.log(responseData);
+        return;
       }
 
-      localStorage.setItem('otpSend', true);
+      localStorage.setItem("otpSend", true);
       setVerificationcode(responseData.verificationcode);
       setToken(responseData.auth);
-      console.log("New verification code sent:", responseData.verificationcode);
 
-      setResendTimer(30); // Reset timer
-      setOtp(new Array(6).fill("")); // Clear input fields
+      setResendTimer(120);
+      setOtp(new Array(6).fill(""));
       inputRefs.current[0]?.focus();
 
-    }
+    } 
     catch (err) {
       console.error("Error in handleResend:", err);
       setError(err.message || "Could not resend OTP.");
@@ -96,6 +89,7 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
       setIsLoading(false);
     }
   };
+
 
 
   // --- Input Handling Logic ---
@@ -157,17 +151,15 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
         localStorage.removeItem('otpSend');
         localStorage.setItem('isAdmin', 'true');
         window.dispatchEvent(new Event('storageChange'));
-        
+
         onVerifySuccess(); // Signal success to parent component ::: calling that funciton :: change the state of page :: run the useEffect :: and return success page ::  navigate to '/' after 2sec  :::>>>
 
       } else {
-        console.log('Verification failed. Expected:', verificationcode, 'Got:', code);
         setError("Invalid OTP. Please try again.");
         setOtp(new Array(6).fill(""));
         inputRefs.current[0].focus();
       }
     } catch (err) {
-      console.error("Verification error:", err);
       setError(err.message || "An error occurred. Please try again later.");
     } finally {
       setIsLoading(false);
@@ -256,5 +248,5 @@ const VerifyEmail = ({ onVerifySuccess, data }) => {
 };
 
 
-export {VerifyEmail};
+export { VerifyEmail };
 

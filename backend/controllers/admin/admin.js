@@ -21,14 +21,15 @@ const Isadmin = async (req, res) => {
 
     const verificationcode = Math.floor(100000 + Math.random() * 900000).toString();
 
-    console.log('data is found' , data)
+    console.log('data is found-->>' , data)
 
     const status = await SendMail({name , email , verificationcode})
+
     if(status) console.log('otp sent to email')
 
     if(!status){
         console.log("sending otp face problem ")
-        return res.json({ data: 'Something went wrong!', valid: 0 });
+        return res.json({ data: 'Something went wrong! , Check email address!', valid: 0 });
     }
 
      const payload = {

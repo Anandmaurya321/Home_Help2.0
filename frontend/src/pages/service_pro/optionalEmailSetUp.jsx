@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { LoadingSpinner , FormLogo , ErrorDisplay} from '../../components/service_pro/register';
+import { LoadingSpinner, FormLogo, ErrorDisplay } from '../../components/service_pro/register';
 import API from '../../hooks/api'
 
 
@@ -10,7 +10,6 @@ import API from '../../hooks/api'
 // --- Optional Email Setup Component ---
 // This component allows service providers to create a full account with email and password, or skip the step.
 const OptionalEmailSetup = () => {
-    console.log("optional email setUp is working")
     const navigate = useNavigate();
     const location = useLocation();
 
@@ -41,28 +40,39 @@ const OptionalEmailSetup = () => {
             setError('Password must be at least 8 characters long.');
             return;
         }
-        
+
         // if everything is fine
         setIsLoading(true);
 
         try {
-            let result;
-            await API.post('/servicepro_register',{ name, email, password, _id: serviceProviderId })
-            .then((res)=>{
-             result = res.data;
-             localStorage.setItem('otpSend', true);
-             localStorage.setItem('email', email);
-             console.log("moving to verifyServie provider")
-             navigate('/verify_ser', { state: {data:{ result, _id: serviceProviderId}}});
-            })
-            .catch((err)=>{
-                setError(err || `Server error`);
-            })
+            const res = await API.post('/servicepro_register', {
+                name,
+                email,
+                password,
+                _id: serviceProviderId,
+            });
+
+            const result = res.data;
+
+            localStorage.setItem('otpSend', true);
+            localStorage.setItem('email', email);
+
+            console.log("moving to verifyService provider");
+
+            navigate('/verify_ser', {
+                state: { data: { result, _id: serviceProviderId } },
+            });
+
+        } catch (err) {
+            console.error('Account submission error:', err);
+
+            setError(
+                err.response?.data?.result ||
+                err.message ||
+                'Server error'
+            );
         }
-        catch (err) {
-            console.error('Account submission fetch error:', err);
-            setError('Could not connect to the server. Please try again later.');
-        } 
+
         finally {
             setIsLoading(false);
         }

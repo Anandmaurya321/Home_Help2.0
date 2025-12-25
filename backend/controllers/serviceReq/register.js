@@ -20,7 +20,7 @@ const Register = async(req ,res)=>{
     
 
     if(result && forgotPassword==undefined){ // checking if alredy exist
-        console.log(result)
+        console.log(result , "email already exist")
         return res.status(400).json({success:false , result:'email alredy used'})
     }
 
@@ -37,11 +37,13 @@ const Register = async(req ,res)=>{
     // check for varification
     
     const verificationcode = Math.floor(100000 + Math.random() * 900000).toString();
+    
+    console.log("name :" , name , " email: " , email , " varificaiton_code :" , verificationcode)
 
-    const status =  SendMail(name , email , verificationcode)
+    const status =  await SendMail({name , email , verificationcode})
 
     if(status){  
-       console.log("otp Send")
+       console.log("otp Sending--")
        return res.status(200).json({
             email,
             password:hashpass, // password is saved in hash form.....
