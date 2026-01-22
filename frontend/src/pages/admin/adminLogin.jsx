@@ -37,6 +37,7 @@ const AdminLogin = () => {
             const data = res.data;
 
             if (data?.valid === 0) {
+                console.log(data);
                 setMessage({ text: data.data || 'Invalid Administrator Credentials', isError: true });
                 return;
             }

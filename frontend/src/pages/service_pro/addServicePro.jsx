@@ -12,7 +12,8 @@ import {
   ShieldCheck,
   Navigation,
   ArrowRight,
-  Info
+  Info,
+  LocateFixed // Added this icon
 } from "lucide-react";
 import API from '../../hooks/api';
 import backgroundImage from '../../assets/servicePro_regis.png';
@@ -26,30 +27,50 @@ const AddServiceProvider = () => {
     const [contact, setContact] = useState("");
     const [service, setService] = useState("");
     const [address, setAddress] = useState("");
+    
+    // Initialize location as empty strings so inputs are editable
     const [location, setLocation] = useState({ latitude: "", longitude: "" });
     const [image, setImage] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
+    const [isLocating, setIsLocating] = useState(false); // State for location button loading
 
-    // --- Auto-fetch Location on Mount ---
-    useEffect(() => {
+    // --- Helper: Detect Location ---
+    const handleDetectLocation = () => {
+        setIsLocating(true);
         if (navigator.geolocation) {
             navigator.geolocation.getCurrentPosition(
                 (position) => {
                     const { latitude, longitude } = position.coords;
                     setLocation({ latitude, longitude });
+                    setIsLocating(false);
                 },
                 (error) => {
                     console.error("Location error:", error);
+                    alert("Unable to retrieve location. Please enter manually.");
+                    setIsLocating(false);
                 }
             );
+        } else {
+            alert("Geolocation is not supported by this browser.");
+            setIsLocating(false);
         }
+    };
+
+    // --- Auto-fetch Location on Mount ---
+    useEffect(() => {
+        handleDetectLocation();
     }, []);
+
+    // --- Handle Manual Coordinate Input ---
+    const handleCoordChange = (field, value) => {
+        setLocation(prev => ({ ...prev, [field]: value }));
+    };
 
     const collectData = async (e) => {
         e.preventDefault();
 
         if (!location.latitude || !location.longitude) {
-            alert("Location coordinates are required for the map pin.");
+            alert("Location coordinates are required.");
             return;
         }
 
@@ -90,7 +111,6 @@ const AddServiceProvider = () => {
             
             {/* --- LEFT SIDE: THE PROVIDER PITCH --- */}
             <div className="hidden lg:flex lg:w-1/2 relative bg-slate-950 p-16 flex-col justify-between overflow-hidden">
-                {/* Background Image with sophisticated overlay */}
                 <img 
                     src={backgroundImage} 
                     alt="Work with us" 
@@ -170,21 +190,50 @@ const AddServiceProvider = () => {
                             </label>
                         </div>
 
-                        {/* Location Badge */}
-                        <div className="md:col-span-2 bg-indigo-50 rounded-2xl p-4 flex items-center justify-between border border-indigo-100">
-                            <div className="flex items-center gap-3">
-                                <div className="bg-indigo-600 p-2 rounded-lg text-white">
-                                    <Navigation size={18} />
+                        {/* --- UPDATED Location Section --- */}
+                        <div className="md:col-span-2 bg-indigo-50/50 rounded-2xl p-4 border border-indigo-100">
+                            <div className="flex items-center justify-between mb-3">
+                                <div className="flex items-center gap-2">
+                                    <div className="bg-indigo-600 p-1.5 rounded-lg text-white">
+                                        <Navigation size={16} />
+                                    </div>
+                                    <span className="text-[10px] font-black uppercase text-indigo-400 tracking-tighter">Coordinates</span>
                                 </div>
-                                <div>
-                                    <p className="text-[10px] font-black uppercase text-indigo-400 tracking-tighter leading-none">Map Coordinates</p>
-                                    <p className="text-sm font-bold text-slate-700">
-                                        {location.latitude ? `${location.latitude.toString().slice(0, 8)}, ${location.longitude.toString().slice(0, 8)}` : "Detecting Location..."}
-                                    </p>
-                                </div>
+                                
+                                {/* Button to re-fetch location */}
+                                <button 
+                                    type="button"
+                                    onClick={handleDetectLocation}
+                                    className="flex items-center gap-1 text-[10px] font-bold text-indigo-600 hover:text-indigo-800 bg-white px-3 py-1.5 rounded-lg shadow-sm border border-indigo-100 transition-all hover:shadow-md active:scale-95"
+                                >
+                                    {isLocating ? <Loader2 size={12} className="animate-spin"/> : <LocateFixed size={12}/>}
+                                    {isLocating ? "DETECTING..." : "USE CURRENT LOCATION"}
+                                </button>
                             </div>
-                            <div className="flex items-center gap-1 text-[10px] font-bold text-emerald-600 bg-emerald-100 px-2 py-1 rounded-md">
-                                <div className="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-ping"></div> GPS ACTIVE
+
+                            <div className="grid grid-cols-2 gap-3">
+                                <div className="space-y-1">
+                                    <label className="text-[9px] font-bold text-slate-400 uppercase ml-1">Latitude</label>
+                                    <input 
+                                        type="number" 
+                                        step="any"
+                                        placeholder="0.0000"
+                                        value={location.latitude} 
+                                        onChange={(e) => handleCoordChange('latitude', e.target.value)}
+                                        className="w-full px-3 py-2 bg-white border border-indigo-100 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-700"
+                                    />
+                                </div>
+                                <div className="space-y-1">
+                                    <label className="text-[9px] font-bold text-slate-400 uppercase ml-1">Longitude</label>
+                                    <input 
+                                        type="number" 
+                                        step="any"
+                                        placeholder="0.0000"
+                                        value={location.longitude} 
+                                        onChange={(e) => handleCoordChange('longitude', e.target.value)}
+                                        className="w-full px-3 py-2 bg-white border border-indigo-100 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none text-sm font-bold text-slate-700"
+                                    />
+                                </div>
                             </div>
                         </div>
 
