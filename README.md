@@ -36,7 +36,6 @@ daily-wage workers gain visibility while enabling users to find reliable profess
 
 <p align="center">
   <img src="images/map_ser_pro.png" width="600"/>
-  <img src="images/map_ser_pro1.png" width="600"/>
 </p>
 
 ---
