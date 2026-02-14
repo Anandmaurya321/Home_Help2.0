@@ -25,7 +25,7 @@ const LockIcon = () => (
 
 // The OTP Verification Component  // onVerifySuccess is a function and data is the object:::>>
 const VerifyEmail = ({ onVerifySuccess, data }) => {
-
+  
   const [otp, setOtp] = useState(new Array(6).fill(""));
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);

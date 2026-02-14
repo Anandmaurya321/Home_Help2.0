@@ -24,7 +24,7 @@ import plumber from "../../assets/plumber.jpg";
 
 const Home_page = () => {
   const [activeSlide, setActiveSlide] = useState(0);
-
+  const [showNotice, setShowNotice] = useState(true);
   const slides = [
     { img: landingImg, title: "Your Local Service Hub" },
     { img: worker, title: "Empowering Skilled Workers" },
@@ -42,8 +42,21 @@ const Home_page = () => {
   }, [slides.length]);
 
   return (
+
+    // for alerting to move of mail into spam  
     <div className="min-h-screen bg-[#020617] text-slate-200 selection:bg-indigo-500/30 font-sans">
-      
+      {showNotice && (
+        <div className="bg-indigo-600/10 border-b border-indigo-500/20 text-indigo-300 text-sm text-center py-3 px-4 relative">
+          📩 If you don’t receive an email after any action (signup/login), please check your Spam/Junk folder.
+          <button
+            onClick={() => setShowNotice(false)}
+            className="absolute right-4 top-1/2 -translate-y-1/2 text-indigo-400 hover:text-white"
+          >
+            ✕
+          </button>
+        </div>
+      )}
+
       {/* ================= HERO SECTION ================= */}
       <section className="container mx-auto px-6 pt-16 pb-24 lg:pt-32 lg:pb-32">
         <div className="flex flex-col lg:flex-row items-center gap-16">
@@ -57,7 +70,7 @@ const Home_page = () => {
             </div>
 
             <h1 className="text-5xl lg:text-7xl font-black text-white leading-[1.1] tracking-tight">
-              Bridging the Gap Between 
+              Bridging the Gap Between
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-indigo-400 via-blue-500 to-emerald-400">
                 Skill & Opportunity.
               </span>
@@ -91,9 +104,8 @@ const Home_page = () => {
               {slides.map((slide, index) => (
                 <div
                   key={index}
-                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${
-                    index === activeSlide ? "opacity-100" : "opacity-0"
-                  }`}
+                  className={`absolute inset-0 transition-opacity duration-1000 ease-in-out ${index === activeSlide ? "opacity-100" : "opacity-0"
+                    }`}
                 >
                   <img
                     src={slide.img}
@@ -105,12 +117,12 @@ const Home_page = () => {
                   </div>
                 </div>
               ))}
-              
+
               {/* Slider Dots */}
               <div className="absolute bottom-4 right-8 flex gap-2">
                 {slides.map((_, i) => (
-                  <div 
-                    key={i} 
+                  <div
+                    key={i}
                     className={`h-1.5 rounded-full transition-all ${i === activeSlide ? "w-8 bg-indigo-500" : "w-2 bg-white/30"}`}
                   />
                 ))}
@@ -127,7 +139,7 @@ const Home_page = () => {
             <h2 className="text-3xl lg:text-5xl font-black text-white mb-4">The Home_Help Advantage</h2>
             <p className="text-slate-400">Everything you need to find work or find help, all in one secure place.</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-8">
             <HighlightCard
               icon={<Zap size={32} className="text-yellow-400" />}
@@ -167,7 +179,7 @@ const Home_page = () => {
 
           <div className="lg:w-1/2 space-y-6 order-1 lg:order-2">
             <h2 className="text-4xl font-black text-white leading-tight">
-              More Than Just An App — <br/>
+              More Than Just An App — <br />
               <span className="text-indigo-400">A Digital Identity.</span>
             </h2>
             <p className="text-slate-400 text-lg leading-relaxed">
@@ -195,7 +207,7 @@ const Home_page = () => {
           </div>
 
           <div className="bg-[#020617] border border-slate-800 rounded-3xl p-10 space-y-8 relative overflow-hidden">
-            <div className="absolute top-0 right-0 p-4 opacity-10"><Lock size={120}/></div>
+            <div className="absolute top-0 right-0 p-4 opacity-10"><Lock size={120} /></div>
             <h4 className="text-2xl font-bold text-white">Platform Security</h4>
             <InfoRow icon={<Lock className="text-indigo-400" />} title="JWT Authentication" text="Secure sessions and encrypted data handling." />
             <InfoRow icon={<ShieldCheck className="text-emerald-400" />} title="Admin Approval" text="Every provider is manually vetted to prevent fraud." />
@@ -209,7 +221,7 @@ const Home_page = () => {
         <div className="bg-gradient-to-br from-indigo-600 via-indigo-700 to-blue-800 rounded-[3rem] p-12 lg:p-20 text-center space-y-8 relative overflow-hidden shadow-2xl">
           <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
           <h3 className="text-4xl lg:text-6xl font-black text-white relative z-10">
-            Ready to find your <br/> next job or expert?
+            Ready to find your <br /> next job or expert?
           </h3>
           <p className="text-indigo-100 max-w-xl mx-auto text-lg relative z-10">
             Join the Home_Help community today and experience the future of local service discovery.
@@ -250,11 +262,10 @@ const Home_page = () => {
 /* ================= HELPER COMPONENTS ================= */
 
 const HighlightCard = ({ icon, title, desc, highlight = false }) => (
-  <div className={`p-8 rounded-3xl border transition-all duration-300 group ${
-    highlight 
-    ? "bg-indigo-600/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10" 
-    : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
-  }`}>
+  <div className={`p-8 rounded-3xl border transition-all duration-300 group ${highlight
+      ? "bg-indigo-600/10 border-indigo-500/50 shadow-lg shadow-indigo-500/10"
+      : "bg-slate-900/50 border-slate-800 hover:border-slate-700"
+    }`}>
     <div className="mb-6 transform group-hover:scale-110 transition-transform">{icon}</div>
     <h4 className="text-xl font-bold text-white mb-3">{title}</h4>
     <p className="text-slate-400 leading-relaxed">{desc}</p>
